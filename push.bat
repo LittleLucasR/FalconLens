@@ -11,11 +11,13 @@ echo.
 if not exist .git (
     echo [!] Repositório Git local não encontrado. Configurando...
     git init
-    git branch -M main
     git remote add origin https://github.com/LittleLucasR/FalconLens.git
     echo [OK] Repositório inicializado e vinculado com sucesso!
     echo.
 )
+
+:: Garantir que a branch principal se chame 'main'
+git branch -M main
 
 :: 2. Pede a mensagem do commit
 set /p msg="Digite a mensagem do commit (ENTER para 'Update FalconLens'): "
