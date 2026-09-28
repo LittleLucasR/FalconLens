@@ -1,0 +1,47 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  canonicalUrl?: string; // Opcional, o Astro pode pegar da URL atual se você não passar
+  image?: string; // A imagem que aparece quando compartilham o link
+}
+
+const {
+  title,
+  description,
+  // Se não passar a URL canônica, pega o caminho da página atual do Astro
+  canonicalUrl = new URL(Astro.url.pathname, Astro.site).href,
+  // Imagem padrão (crie essa imagem e coloque na pasta /public)
+  image = "/banner-compartilhamento-padrao.jpg",
+} = Astro.props;
+
+// Formata o título para incluir o nome da empresa
+const siteName = "Sua Empresa";
+const titleFormatted = `${title} | ${siteName}`;
+
+// URL completa da imagem para as redes sociais
+const imageUrl = new URL(image, Astro.site).href;
+---
+
+<!-- Título e Descrição Básicos -->
+<title>{titleFormatted}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalUrl} />
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:title" content={titleFormatted} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+
+<!-- Twitter / X -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={canonicalUrl} />
+<meta property="twitter:title" content={titleFormatted} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={imageUrl} />
+
+<!-- Outros Meta Tags Importantes -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#ffffff" /> <!-- Cor do topo no mobile -->

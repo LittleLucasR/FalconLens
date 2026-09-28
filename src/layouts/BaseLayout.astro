@@ -1,0 +1,27 @@
+---
+import SEO from '../components/SEO.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { title, description, image } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- Chamando seu novo componente! -->
+    <SEO title={title} description={description} image={image} />
+    
+  </head>
+  <body>
+    <slot /> <!-- O conteúdo da página vai aqui -->
+  </body>
+</html>
