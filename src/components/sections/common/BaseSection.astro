@@ -1,0 +1,47 @@
+---
+interface Props {
+  id?: string;
+  class?: string;
+  /** Se true, a secção ocupa pelo menos 100% da altura do ecrã (100dvh) */
+  fullScreen?: boolean;
+  /** Se true, envolve o conteúdo num contêiner com largura máxima padronizada */
+  useContainer?: boolean;
+  /** Variante de fundo rápida */
+  bg?: 'default' | 'muted' | 'dark' | 'brand';
+}
+
+const {
+  id,
+  class: className = '',
+  fullScreen = false,
+  useContainer = true,
+  bg = 'default'
+} = Astro.props;
+
+// Mapeamento de fundos padrão
+const bgStyles = {
+  default: 'bg-white text-neutral-900',
+  muted: 'bg-neutral-100 text-neutral-900',
+  dark: 'bg-neutral-900 text-white',
+  brand: 'bg-blue-600 text-white',
+};
+---
+
+<section 
+  id={id}
+  class:list={[
+    "w-full relative flex flex-col justify-center overflow-hidden",
+    // min-h-dvh ajusta-se dinamicamente ao ecrã do telemóvel (escondendo/mostrando a barra do browser)
+    fullScreen ? "min-h-dvh py-12" : "py-16 md:py-24",
+    bgStyles[bg],
+    className
+  ]}
+>
+  {useContainer ? (
+    <div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center flex-1">
+      <slot />
+    </div>
+  ) : (
+    <slot />
+  )}
+</section>

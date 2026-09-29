@@ -1,66 +1,94 @@
 @echo off
+setlocal
 chcp 65001 > nul
 title FalconLens - Novo Projeto
 
 echo ==================================================
-echo   🦅 FalconLens - Gerador de Novo Projeto
+echo   FalconLens - Gerador de Novo Projeto
 echo ==================================================
 echo.
 
-:: 1. Pede o nome do projeto/cliente
-set /p folder="Digite o nome da pasta do NOVO projeto (ex: cliente-advocacia): "
-
-if "%folder%"=="" (
-    echo [!] Nome inválido. Operação cancelada.
+set /p "folder=Digite o nome da pasta do NOVO projeto: "
+if not defined folder (
+    echo [!] Nome invalido. Operacao cancelada.
     pause
-    exit /b
+    exit /b 1
+)
+
+for %%I in ("%~dp0.") do set "source=%%~fI"
+for %%I in ("%~dp0..") do set "parent=%%~fI"
+set "destination=%parent%\%folder%"
+
+if /i "%folder%"=="." (
+    echo [!] Use um nome de pasta, nao um caminho.
+    pause
+    exit /b 1
+)
+if /i "%folder%"==".." (
+    echo [!] Use um nome de pasta, nao um caminho.
+    pause
+    exit /b 1
+)
+if /i "%folder%"==".git" (
+    echo [!] Esse nome e reservado para os dados do Git.
+    pause
+    exit /b 1
+)
+if exist "%destination%" (
+    echo [!] O destino ja existe: "%destination%"
+    echo     Nada foi alterado. Escolha outro nome.
+    pause
+    exit /b 1
 )
 
 echo.
-echo [+] Clonando o template mãe (FalconLens)...
-git clone https://github.com/LittleLucasR/FalconLens.git %folder%
-
-if not exist %folder% (
-    echo [X] Erro ao clonar o repositório. Verifique a URL ou sua conexão.
+echo [+] Copiando os arquivos locais do projeto, sem o historico Git...
+robocopy "%source%" "%destination%" /E /XJ /XD .git node_modules .astro dist /XF .git
+if errorlevel 8 (
+    echo [X] Falha ao copiar os arquivos. Codigo do Robocopy: %errorlevel%
     pause
-    exit /b
+    exit /b 1
 )
 
-:: 2. Entra na pasta do novo projeto
-cd %folder%
+echo.
+echo [+] Inicializando um repositorio Git novo, sem remoto...
+git -C "%destination%" init
+if errorlevel 1 (
+    echo [X] Nao foi possivel inicializar o novo repositorio.
+    pause
+    exit /b 1
+)
+git -C "%destination%" branch -M main
+if errorlevel 1 (
+    echo [X] Nao foi possivel definir a branch main.
+    pause
+    exit /b 1
+)
 
 echo.
-echo [+] Desvinculando do Git original (removendo histórico do FalconLens)...
-rmdir /s /q .git
-
-echo [+] Inicializando um Git NOVO e limpo para este cliente...
-git init
-git branch -M main
-
-echo.
-:: 3. Pergunta se quer instalar as dependências
-set /p install="Deseja rodar 'npm install' agora? (S/N) [Padrão: S]: "
-if "%install%"=="" set install=S
-
+set /p "install=Deseja rodar npm install agora? (S/N) [Padrao: S]: "
+if not defined install set "install=S"
 if /i "%install%"=="S" (
     echo.
-    echo [+] Instalando dependências do projeto (aguarde)...
+    echo [+] Instalando dependencias...
+    pushd "%destination%"
     call npm install
+    if errorlevel 1 echo [!] npm install terminou com erro.
+    popd
 )
 
 echo.
-:: 4. Pergunta se quer abrir direto no VS Code
-set /p vscode="Deseja abrir no VS Code agora? (S/N) [Padrão: S]: "
-if "%vscode%" grass="" set vscode=S
-
+set /p "vscode=Deseja abrir no VS Code agora? (S/N) [Padrao: S]: "
+if not defined vscode set "vscode=S"
 if /i "%vscode%"=="S" (
     echo [+] Abrindo no VS Code...
-    code .
+    code "%destination%"
 )
 
 echo.
 echo ==================================================
-echo  🚀 Projeto '%folder%' pronto para rodar!
+echo  Projeto "%folder%" criado em "%destination%"
+echo  O repositorio original nao foi alterado.
 echo ==================================================
 echo.
 pause

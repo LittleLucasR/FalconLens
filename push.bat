@@ -7,13 +7,18 @@ echo   🦅 FalconLens - Enviando para o GitHub
 echo ==================================================
 echo.
 
-:: 1. Verifica se a pasta .git ja existe
+:: 1. Exige um repositorio e remoto configurados explicitamente
 if not exist .git (
-    echo [!] Repositório Git local não encontrado. Configurando...
-    git init
-    git remote add origin https://github.com/LittleLucasR/FalconLens.git
-    echo [OK] Repositório inicializado e vinculado com sucesso!
-    echo.
+    echo [!] Repositorio Git local nao encontrado. Inicialize-o primeiro.
+    pause
+    exit /b 1
+)
+git remote get-url origin > nul 2>&1
+if errorlevel 1 (
+    echo [!] Nenhum remoto 'origin' configurado.
+    echo     Configure o URL do seu proprio repositorio antes de enviar.
+    pause
+    exit /b 1
 )
 
 :: Garantir que a branch principal se chame 'main'
