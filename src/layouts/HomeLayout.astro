@@ -1,0 +1,29 @@
+---
+// src/layouts/NotCustomerLayout.astro
+// Contrato: HeaderMain renderiza <header> e FooterMain renderiza <footer> na raiz.
+// O <main id="main-content"> é o alvo do skip link do BaseLayout.
+import type { ComponentProps } from 'astro/types';
+import BaseLayout from './common/BaseLayout.astro';
+import HeaderMain from '../components/sections/HeaderMain.astro';
+import FooterMain from '../components/sections/FooterMain.astro';
+
+type Props = Partial<ComponentProps<typeof BaseLayout>>;
+
+const {
+  title = 'Título padrão da página',
+  description = 'Descrição padrão da página',
+  ...rest
+} = Astro.props;
+---
+
+<BaseLayout title={title} description={description} {...rest}>
+  <slot name="head" slot="head" />
+
+  <HeaderMain />
+
+  <main id="main-content" tabindex="-1" class="flex-1 focus:outline-none">
+    <slot />
+  </main>
+
+  <FooterMain />
+</BaseLayout>

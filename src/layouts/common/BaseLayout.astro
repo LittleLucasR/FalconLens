@@ -1,47 +1,49 @@
 ---
-// O BaseLayout é o layout principal que serve como base para outros layouts. Ele define a estrutura HTML básica, incluindo o <head> com SEO e metatags, e o <body> com classes de estilo e acessibilidade. Os layouts filhos podem injetar conteúdo específico através do slot.
-
-// Parâmetros de SEO e metatags
+// src/layouts/common/BaseLayout.astro
+import type { ComponentProps } from 'astro/types';
 import SEO from '../../components/SEO.astro';
-
-// Tailwind CSS importado no BaseLayout, então não é necessário importar isoladamente
 import '../../styles/global.css';
 
-interface Props {
-  title: string;
-  description: string;
-  image?: string;
-}
+// As props de SEO vêm direto do componente: se você adicionar uma lá, chega aqui sem retrabalho
+type Props = ComponentProps<typeof SEO> & {
+  bodyClass?: string;
+};
 
-const { title, description, image } = Astro.props;
+const { bodyClass = '', ...seo } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR" class="motion-safe:scroll-smooth scroll-pt-20">
   <head>
     <meta charset="UTF-8" />
-    <!-- ESSENCIAL: Sem isto a responsividade mobile não funciona -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
 
-    <!-- SEO e Metatags -->
-    <SEO title={title} description={description} image={image} />
+    {/* Título + description + canonical + OG + Twitter + theme-color */}
+    <SEO {...seo} />
 
-    <!-- Slot para injetar scripts ou meta tags no <head> via páginas específicas -->
+    {/* Ícones */}
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    {/* Extras da página: preload do hero, JSON-LD, analytics, etc. */}
     <slot name="head" />
   </head>
-  <body class="bg-neutral-50 text-neutral-900 antialiased min-h-screen w-full max-w-full overflow-x-hidden flex flex-col">
-    <!-- Acessibilidade: Atalho de teclado para leitores de ecrã pular o menu -->
-    <a 
-      href="#main-content" 
+  <body
+    class:list={[
+      'min-h-dvh flex flex-col overflow-x-clip',
+      'bg-neutral-50 text-neutral-900 antialiased',
+      bodyClass,
+    ]}
+  >
+    <a
+      href="#main-content"
       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md"
     >
       Pular para o conteúdo principal
     </a>
 
-    <!-- O Layout Filho ou Página entra aqui -->
     <slot />
   </body>
 </html>
