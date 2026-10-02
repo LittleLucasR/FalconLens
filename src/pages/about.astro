@@ -1,10 +1,10 @@
 ---
-// src/pages/index.astro
+// src/pages/about.astro
 import HomeLayout from '../layouts/HomeLayout.astro';
 
 const structuredData = {
   '@context': 'https://schema.org',
-  '@type': 'WebSite',
+  '@type': 'AboutPage',
   name: 'Sua Empresa',
   url: Astro.site?.toString(),
 };
@@ -15,10 +15,5 @@ const structuredData = {
   description="Descrição da página inicial."
   image="/banner-ofertas.jpg"
 >
-{/* Envia o JSON-LD para o <head> usando o slot! */}
-<script type="application/ld+json" slot="head" set:html={JSON.stringify(structuredData)} />
-
-<div class="bg-surface text-foreground">
-  Conteúdo
-</div>
+<h1>Sobre nós</h1>
 </HomeLayout>

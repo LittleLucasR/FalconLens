@@ -29,11 +29,24 @@ const { bodyClass = '', ...seo } = Astro.props;
 
     {/* Extras da página: preload do hero, JSON-LD, analytics, etc. */}
     <slot name="head" />
+
+    {/* Theme Toggle */}
+    <script is:inline>
+      const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      let theme = systemDark ? "dark" : "light";
+
+      try {
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark" || saved === "light") theme = saved;
+      } catch {}
+
+      document.documentElement.dataset.theme = theme;
+    </script>
   </head>
   <body
     class:list={[
       'min-h-dvh flex flex-col overflow-x-clip',
-      'bg-neutral-50 text-neutral-900 antialiased',
+      'bg-surface text-foreground antialiased transition-colors',
       bodyClass,
     ]}
   >

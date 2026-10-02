@@ -1,6 +1,7 @@
 ---
-// src/layouts/NotCustomerLayout.astro
+// src/layouts/HomeLayout.astro
 // Contrato: HeaderMain renderiza <header> e FooterMain renderiza <footer> na raiz.
+// <slot name="head" slot="head" /> Faz o repasse (forwarding) do slot "head" da página atual para o BaseLayout
 // O <main id="main-content"> é o alvo do skip link do BaseLayout.
 import type { ComponentProps } from 'astro/types';
 import BaseLayout from './common/BaseLayout.astro';
