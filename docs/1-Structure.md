@@ -14,3 +14,5 @@ Página inicial (index.astro): @type: 'WebSite'; Página Sobre (/sobre.astro): @
 Light/Dark Toogle; OK
 - O Browser define o tema da página inicialmente;
 - O mapeamento do tema esta centralizado no global.css;
+
+Página de Erro 404; OK
